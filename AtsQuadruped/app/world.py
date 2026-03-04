@@ -52,15 +52,21 @@ class SimWorld:
         import omni.timeline
         import carb.settings
 
+        # Stage Open
         open_stage(usd_path)
+
+        # Robot을 Physics simulation의 Articulation으로 연결
         self.stage = omni.usd.get_context().get_stage()
 
+        # Articulation root prim 탐색기 함수
         def _find_articulation_root(stage, base_path: str) -> str | None:
             from pxr import Sdf, Usd, UsdPhysics
             base = stage.GetPrimAtPath(base_path)
             if not base.IsValid():
                 return None
+            
 
+            # 경로의 하위 경로들을 순회하여 진짜 루트를 찾아낸다
             if UsdPhysics.ArticulationRootAPI.CanApply(base):
                 if UsdPhysics.ArticulationRootAPI(base):
                     return base.GetPath().pathString
@@ -72,7 +78,11 @@ class SimWorld:
             return None
 
         settings = carb.settings.acquire_settings_interface()
+
+        # 시간과 타임라인 고정
         timeline = omni.timeline.get_timeline_interface()
+
+        # fixed_time_step: 목표 주파수를 설정해 ROS2와 시간축 통일
         if fixed_time_step:
             settings.set("/app/player/useFixedTimeStepping", True)
         timeline.set_play_every_frame(play_every_frame)
@@ -81,6 +91,8 @@ class SimWorld:
         
         #define_prim("/World/Spot/base_link", "Xform")
         #define_prim(imu_dummy_prim, "Xform")
+
+        # 오돔과 지도좌표계 즉 map과 구분하기 위해 스테이지상 xform으로 고정점생성함
         define_prim("/World/odom", "Xform")
 
         #cam_path = "/World/Spot/base_link/Camera"
@@ -96,6 +108,9 @@ class SimWorld:
 
         if not spot_root:
             raise RuntimeError(f"[SimWorld] Could not find ArticulationRoot under '{spot_prim}'")
+        
+        # Articulation View를 만들어 물리엔진과 연동함
+        # Articulation View는 이후 관절상태 조회, 목표치 설정의 표준 통로가 된다
         self.spot = ArticulationView(prim_paths_expr=spot_root, name="spot_view")
         self.world.scene.add(self.spot)
         self.world.play()
@@ -107,4 +122,5 @@ class SimWorld:
 
     def step(self, render=True):
         self.world.step(render=render)
+        
 
