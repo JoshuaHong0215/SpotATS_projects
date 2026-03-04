@@ -73,6 +73,7 @@ class GraphBuilder:
             {
                 "graph_path": graph_path,
                 "evaluator_name": "push",
+                # ondemand: 매 프레임마다 자동으로 평가되는게 아니라 필요할 때 코드가 직접 밀어넣는 push방식으로 평가된다는 뜻
                 "pipeline_stage": og.GraphPipelineStage.GRAPH_PIPELINE_STAGE_ONDEMAND,
             },
             {
