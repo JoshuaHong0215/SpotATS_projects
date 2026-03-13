@@ -37,6 +37,8 @@ class GraphBuilder:
             "omni.isaac.ros2_bridge",
             "omni.isaac.sensor",           # RTX LiDAR
         ]:
+            
+            # 없는 플로그인이면 프로그램이 터지지 않도록 try-except와 pass로 방ㅇ어
             try:
                 enable_extension(ext)
             except Exception:
@@ -56,7 +58,7 @@ class GraphBuilder:
         define_prim("/World/CustomGraph/CharacterAnimation/AnimationGraph", "AnimationGraph")
 
     # --------------------------------------------------------------------- #
-    # 카메라 ROS 퍼블리셔 그래프
+    # 카메라 ROS 퍼블리셔 그래프 / 로봇 눈에 달리 카메라 화면을 찍어서 ROS 2로 쏘는 역할을 수행
     # --------------------------------------------------------------------- #
     def build_camera_ros_graph(self, graph_path: str = "/ActionGraph"):
         """

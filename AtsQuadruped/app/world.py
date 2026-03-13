@@ -52,11 +52,13 @@ class SimWorld:
         import omni.timeline
         import carb.settings
 
+
+        # 스테이지 열기
         # Stage Open
         open_stage(usd_path)
-
         # Robot을 Physics simulation의 Articulation으로 연결
         self.stage = omni.usd.get_context().get_stage()
+
 
         # Articulation root prim 탐색기 함수
         def _find_articulation_root(stage, base_path: str) -> str | None:
@@ -78,6 +80,8 @@ class SimWorld:
             return None
 
         settings = carb.settings.acquire_settings_interface()
+
+
 
         # 시간과 타임라인 고정
         timeline = omni.timeline.get_timeline_interface()
